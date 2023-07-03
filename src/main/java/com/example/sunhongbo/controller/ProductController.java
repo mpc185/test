@@ -39,6 +39,7 @@ public class ProductController {
     @PostMapping("/sc")
     public Result sc(@RequestBody String productId){
         int productId1 = Integer.parseInt(productId);
+        System.out.println("-------------------------");
         return productService.deleteProduct(productId1);
     }
 }
