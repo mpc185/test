@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品信息</title>
+    <!-- <link rel="stylesheet" href="./css/index.css"> -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="./js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div>
+        <button id="addproduct" onclick="addproduct()">添加商品</button>
+    </div>
+    <div>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>商品编号</th>
+                <th>商品名称</th>
+                <th>库存</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="tb">
+            
+            </tbody>
+        </table>
+    </div>
+
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script>
+        // 发送请求
+        var path = "http://localhost:8080/index";
+            $.ajax({
+                url: path,
+                type: "post",
+                dataType: 'json',
+                contentType: "application/json;charset=utf-8", 
+                success: function(result) {
+                    if(result.flag == "success"){
+                        var tb = document.getElementById("tb")
+                        for(var i=0;i<result.data.length;i++){
+                            bg = "<tr><td>"+result.data[i].productId+"</td><td>"+result.data[i].productName+
+                                "</td><td>"+result.data[i].productStock+"</td><td>"+
+                                "<button id='xiugai' onclick='xg("+result.data[i].productId+")''>修改</button>"+
+                                "<button id='shanchu' onclick='sc("+result.data[i].productId+")'>删除</button></td></tr>"
+                            tb.innerHTML += bg
+                        }
+                        
+                    }
+                },
+                error: function(result) {
+                    alert("服务器异常！")
+                }
+            });
+        function addproduct(){
+            window.sessionStorage.setItem("flag","add")
+            window.location.href="./addproduct.html"
+        }
+        function xg(id){
+            window.sessionStorage.setItem("flag","xg")
+            window.sessionStorage.setItem("productId",id)
+            window.location.href="./addproduct.html"
+        }
+        function sc(id){
+            var productId = JSON.stringify(id)
+            var path = 'http://localhost:8080/sc'
+            $.ajax({
+                url: path,
+                type: "post",
+                data:productId,
+                dataType: 'json',
+                contentType: "application/json;charset=utf-8", 
+                success: function(result) {
+                    if(result.flag == "success"){
+                        alert("删除成功！")
+                        window.location.reload()
+                    }
+                },
+                error: function(result) {
+                    alert("服务器异常！")
+                }
+            });
+        }
+    </script>
+</body>
+</html>

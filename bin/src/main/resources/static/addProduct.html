@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品信息</title>
+    <!-- <link rel="stylesheet" href="./css/index.css"> -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <script src="./js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div style="margin: 1vh;">
+        <input type="text" id="name" placeholder="商品名称" >
+    </div>
+    <div style="margin: 1vh;">
+        <input type="text" id="stock" placeholder="商品库存" >
+    </div>
+    <div style="margin: 1vh;">
+        <button id="back" onclick="back()">返回</button>
+        <button id="qd" onclick="qd()">确定</button>
+    </div>
+
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script>
+        var flag = window.sessionStorage.getItem("flag")
+        if (flag == 'xg'){
+            var productId = window.sessionStorage.getItem("productId")
+            var path = 'http://localhost:8080/xgcx'
+            $.ajax({
+                url: path,
+                type: "post",
+                data:productId,
+                dataType: 'json',
+                contentType: "application/json;charset=utf-8", 
+                success: function(result) {
+                    if(result.flag == "success"){
+                        document.getElementById("name").value = result.data.productName
+                        document.getElementById("stock").value = result.data.productStock
+                    }
+                },
+                error: function(result) {
+                    alert("服务器异常！")
+                }
+            });
+            
+        }
+        function back(){
+            window.location.href="./index.html"
+        }
+        function qd(){
+            var name = document.getElementById("name").value
+            var stock = document.getElementById("stock").value
+            if(name==''||stock==''){
+                alert('请输入商品信息！')
+                return;
+            }
+            stock = parseInt(stock)
+            var data={
+                productName:name,
+                productStock:stock
+            }
+            // 发送请求
+            var path = 'http://localhost:8080/add'
+            if(flag == 'xg'){
+                path = "http://localhost:8080/xg";
+                data = {
+                    productId:window.sessionStorage.getItem("productId"),
+                    productName:name,
+                    productStock:stock
+                }
+            }
+            var dataJson = JSON.stringify(data)
+            $.ajax({
+                url: path,
+                type: "post",
+                data:dataJson,
+                dataType: 'json',
+                contentType: "application/json;charset=utf-8", 
+                success: function(result) {
+                    if(result.flag == "success"){
+                        window.location.href="./index.html"
+                    }
+                    else{
+                        alert("已存在该商品信息！")
+                    }
+                },
+                error: function(result) {
+                    alert("服务器异常！")
+                }
+            });
+        }
+    </script>
+</body>
+</html>
