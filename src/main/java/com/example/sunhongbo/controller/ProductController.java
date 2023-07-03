@@ -33,6 +33,7 @@ public class ProductController {
 
     @PostMapping("/xg")
     public Result xg(@RequestBody Product product){
+        System.out.println("-------------------------");
         return productService.updateProduct(product);
     }
 
