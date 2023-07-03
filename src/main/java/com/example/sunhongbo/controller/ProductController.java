@@ -33,13 +33,13 @@ public class ProductController {
 
     @PostMapping("/xg")
     public Result xg(@RequestBody Product product){
+        System.out.println("-------------------------");
         return productService.updateProduct(product);
     }
 
     @PostMapping("/sc")
     public Result sc(@RequestBody String productId){
         int productId1 = Integer.parseInt(productId);
-        System.out.println("-------------------------");
         return productService.deleteProduct(productId1);
     }
 }
